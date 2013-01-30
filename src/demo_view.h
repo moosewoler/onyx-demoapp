@@ -23,6 +23,7 @@ public:
 
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent*);
+    //virtual void mousePressEvent(QMouseEvent*);
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void keyReleaseEvent(QKeyEvent *ke);
     virtual void closeEvent(QCloseEvent * event);
@@ -34,11 +35,15 @@ private Q_SLOTS:
     void onCloseClicked();
 
 private:
-    QString currentState();
+    void currentState(const QString & str);
+    QString msg_;
+    QPoint  point_;
+    
 
 private:
     OnyxPushButton start_;
     OnyxPushButton close_;
+
 };
 
 

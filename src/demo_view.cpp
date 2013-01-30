@@ -12,7 +12,10 @@ DemoView::DemoView(QWidget *parent)
     , start_(tr("Start"), 0)
     , close_(tr("Close"), 0)
 {
+    msg_="Demo Application\nA blank application.";
+    point_=QPoint(0,0);
     onyx::screen::watcher().addWatcher(this);
+    update();
     onyx::screen::watcher().enqueue(this, onyx::screen::ScreenProxy::GC);
 }
 
@@ -75,6 +78,20 @@ void DemoView::mouseDoubleClickEvent(QMouseEvent*me)
     me->accept();
 }
 
+//void DemoView::mousePressEvent(QMouseEvent*me)
+//{
+//    QString str = QString("(,)");
+//    str.insert(1,QString::number(me->x()));
+//    str.insert(str.indexOf(QChar(',')), QString::number(me->y()));
+//    currentState(str);
+//    point_ = me->pos();
+//
+//    update();
+//    onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GU);
+//
+//    me->accept();
+//}
+
 bool DemoView::eventFilter(QObject *obj, QEvent *e)
 {
     qDebug("Select event:%d", e->type());
@@ -85,16 +102,16 @@ bool DemoView::eventFilter(QObject *obj, QEvent *e)
     return QObject::eventFilter(obj, e);
 }
 
-void DemoView::paintEvent(QPaintEvent *)
+void DemoView::paintEvent(QPaintEvent *e)
 {
     QPainter painter(this);
     painter.fillRect(rect(), Qt::white);
     QFont font = QApplication::font();
-    font.setPointSize(34);
+    font.setPointSize(16);
     painter.setFont(font);
     QFontMetrics fm(font);
 
-    painter.drawText(QRect(0, BUTTON_HEIGHT, width(), height() - BUTTON_HEIGHT), Qt::AlignHCenter | Qt::AlignTop, currentState());
+    painter.drawText(QRect(point_.x(),point_.y(), 200, 200), Qt::AlignLeft, msg_);
 }
 
 void DemoView::onStartClicked()
@@ -127,9 +144,8 @@ bool DemoView::exec(const QStringList & args)
     return true;
 }
 
-QString DemoView::currentState()
+void DemoView::currentState(const QString & str)
 {
-    QString result(tr("DemoApplication.\nA blank application."));
-    return result;
+    msg_ = str;
 }
 

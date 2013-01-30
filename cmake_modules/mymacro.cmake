@@ -27,6 +27,8 @@ macro       (PRE_CONFIGURE)
 
     # Project include directories.
     message             (STATUS "QT_LIBRARY_DIR is set to ${QT_LIBRARY_DIR}")
+    message             (STATUS "CMAKE_SOURCE_DIR is set to ${CMAKE_SOURCE_DIR}")
+    message             (STATUS "CMAKE_FIND_ROOT_PATH is set to ${CMAKE_FIND_ROOT_PATH}")
     include_directories (BEFORE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_FIND_ROOT_PATH}/include)
     link_directories    (${QT_LIBRARY_DIR})
 endmacro    (PRE_CONFIGURE)

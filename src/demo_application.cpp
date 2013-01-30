@@ -31,5 +31,3 @@ bool DemoApplication::execShellCommand(const QStringList &args)
 {
     return true;
 }
-
-
