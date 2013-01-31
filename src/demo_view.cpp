@@ -21,6 +21,13 @@ DemoView::DemoView(QWidget *parent)
     update();
     onyx::screen::watcher().enqueue(this, onyx::screen::ScreenProxy::GC);
 
+    freq_=1;
+    timer_.setInterval(int(1/freq_)); // 10Hz
+    logger.log(QString("INFO  set freq_ to ")+QString::number(freq_));
+    counter_=10;
+    connect(&timer_, SIGNAL(timeout()), this, SLOT(OnTimer()));
+    timer_.start();
+
     logger.log("LEAVE DemoView:DemoView().");
 }
 
@@ -52,25 +59,48 @@ void DemoView::keyReleaseEvent(QKeyEvent *ke)
     switch (ke->key())
     {
     case ui::Device_Menu_Key:
+        logger.log(QString("INFO  Device_Menu_Key pressed."));
         break;
     case Qt::Key_Left:
+        logger.log(QString("INFO  Key_Left pressed."));
         break;
     case Qt::Key_Right:
+        logger.log(QString("INFO  Key_Right pressed."));
         break;
     case Qt::Key_PageDown:
+        if (freq_ > 1)
+        {
+            freq_--;
+            timer_.stop();
+            counter_=10;
+            timer_.setInterval(int(1/freq_));
+            timer_.start();
+        }
+        logger.log(QString("INFO  Key_PageDown pressed."));
         break;
     case Qt::Key_Down:
+        logger.log(QString("INFO  Key_Down pressed."));
         break;
     case Qt::Key_PageUp:
+        freq_++;
+        timer_.stop();
+        counter_=10;
+        timer_.setInterval(int(1/freq_));
+        timer_.start();
+        logger.log(QString("INFO  Key_PageUp pressed."));
         break;
     case Qt::Key_Up:
+        logger.log(QString("INFO  Key_Up pressed."));
         break;
     case Qt::Key_C:
+        logger.log(QString("INFO  Key_C pressed."));
         break;
     case Qt::Key_Escape:
     case Qt::Key_Home:
+        logger.log(QString("INFO  Key_Home pressed."));
         onCloseClicked();
     default:
+        logger.log(QString("INFO  unknown key pressed."));
         QWidget::keyReleaseEvent(ke);
         break;
     }
@@ -86,26 +116,27 @@ void DemoView::closeEvent(QCloseEvent * event)
 }
 
 /// Ignore the double click event.
-void DemoView::mouseDoubleClickEvent(QMouseEvent*me)
-{
-    logger.log("ENTER DemoView:mouseDoubleClickEvent().");
-    me->accept();
-    logger.log("LEAVE DemoView:mouseDoubleClickEvent().");
-}
-
-//void DemoView::mousePressEvent(QMouseEvent*me)
+//void DemoView::mouseDoubleClickEvent(QMouseEvent*me)
 //{
-//    QString str = QString("(,)");
-//    str.insert(1,QString::number(me->x()));
-//    str.insert(str.indexOf(QChar(',')), QString::number(me->y()));
-//    currentState(str);
-//    point_ = me->pos();
-//
-//    update();
-//    onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GU);
-//
+//    logger.log("ENTER DemoView:mouseDoubleClickEvent().");
 //    me->accept();
+//    logger.log("LEAVE DemoView:mouseDoubleClickEvent().");
 //}
+
+void DemoView::mousePressEvent(QMouseEvent*me)
+{
+    logger.log("ENTER DemoView:mousePressEvent().");
+    QString str = QString("(,)");
+    str.insert(1,QString::number(me->x()));
+    str.insert(str.indexOf(QChar(')')), QString::number(me->y()));
+    currentState(str);
+    point_ = me->pos();
+
+    update();
+
+    //me->accept();
+    logger.log("LEAVE DemoView:mousePressEvent().");
+}
 
 bool DemoView::eventFilter(QObject *obj, QEvent *e)
 {
@@ -128,11 +159,12 @@ void DemoView::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.fillRect(rect(), Qt::white);
     QFont font = QApplication::font();
-    font.setPointSize(16);
+    font.setPointSize(24);
     painter.setFont(font);
     QFontMetrics fm(font);
 
-    painter.drawText(QRect(point_.x(),point_.y(), 200, 200), Qt::AlignLeft, msg_);
+    painter.drawText(QRect(point_.x(),point_.y(), width(), 200), Qt::AlignLeft, msg_);
+    onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::A2, false);
 
     logger.log("LEAVE DemoView:paintEvent().");
 }
@@ -184,3 +216,19 @@ void DemoView::currentState(const QString & str)
     logger.log("LEAVE DemoView:currentState().");
 }
 
+void DemoView::OnTimer()
+{
+    logger.log("ENTER DemoView:OnTimer().");
+
+    currentState(QString("counter = ")+QString::number(counter_)+QString(" freq = ")+QString::number(freq_));
+    point_.setX(point_.x()+1);
+    update();
+
+    counter_--;
+    if (counter_ == 0)
+    {
+        timer_.stop();
+    }
+    logger.log(QString("INFO  counter = ") + QString::number(counter_));
+    logger.log("LEAVE DemoView:OnTimer().");
+}

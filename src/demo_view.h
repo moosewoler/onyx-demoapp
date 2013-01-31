@@ -22,8 +22,8 @@ public:
     bool exec(const QStringList & args);
 
 protected:
-    virtual void mouseDoubleClickEvent(QMouseEvent*);
-    //virtual void mousePressEvent(QMouseEvent*);
+    //virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent*);
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void keyReleaseEvent(QKeyEvent *ke);
     virtual void closeEvent(QCloseEvent * event);
@@ -33,12 +33,17 @@ protected:
 private Q_SLOTS:
     void onStartClicked();
     void onCloseClicked();
+    void OnTimer();
 
 private:
     void currentState(const QString & str);
     QString msg_;
     QPoint  point_;
-    
+
+private:
+    int     freq_;
+    int     counter_;
+    QTimer  timer_;
 
 private:
     OnyxPushButton start_;
