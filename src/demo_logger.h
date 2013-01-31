@@ -9,9 +9,15 @@ class DemoLogger
         ~DemoLogger(void);
     public:
         void log(const QString & message);
+        DemoLogger & operator << (const QString & message);
     private:
-        QFile file_;
+        QFile       file_;
         QTextStream out_;
+        int         loglevel_;
 };
+
+#ifndef DEMO_LOGGER_IMPLEMENTATION
+extern DemoLogger logger;
+#endif
 
 #endif

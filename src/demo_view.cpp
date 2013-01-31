@@ -4,6 +4,7 @@
 #include "onyx/sys/sys_status.h"
 #include "onyx/sys/platform.h"
 #include "onyx/data/configuration.h"
+#include "demo_logger.h"
 
 static const int BUTTON_HEIGHT = 100;
 
@@ -12,19 +13,26 @@ DemoView::DemoView(QWidget *parent)
     , start_(tr("Start"), 0)
     , close_(tr("Close"), 0)
 {
+    logger.log("ENTER DemoView:DemoView().");
+
     msg_="Demo Application\nA blank application.";
     point_=QPoint(0,0);
     onyx::screen::watcher().addWatcher(this);
     update();
     onyx::screen::watcher().enqueue(this, onyx::screen::ScreenProxy::GC);
+
+    logger.log("LEAVE DemoView:DemoView().");
 }
 
 DemoView::~DemoView()
 {
+    logger.log("ENTER DemoView:~DemoView().");
+    logger.log("LEAVE DemoView:~DemoView().");
 }
 
 void DemoView::keyPressEvent(QKeyEvent *e)
 {
+    logger.log("ENTER DemoView:keyPressEvent().");
     switch (e->key())
     {
     case Qt::Key_Down:
@@ -35,10 +43,12 @@ void DemoView::keyPressEvent(QKeyEvent *e)
         break;
     }
     e->accept();
+    logger.log("LEAVE DemoView:keyPressEvent().");
 }
 
 void DemoView::keyReleaseEvent(QKeyEvent *ke)
 {
+    logger.log("ENTER DemoView:keyReleaseEvent().");
     switch (ke->key())
     {
     case ui::Device_Menu_Key:
@@ -65,17 +75,22 @@ void DemoView::keyReleaseEvent(QKeyEvent *ke)
         break;
     }
     ke->ignore();
+    logger.log("LEAVE DemoView:keyReleaseEvent().");
 }
 
 void DemoView::closeEvent(QCloseEvent * event)
 {
+    logger.log("ENTER DemoView:closeEvent().");
     QWidget::closeEvent(event);
+    logger.log("LEAVE DemoView:closeEvent().");
 }
 
 /// Ignore the double click event.
 void DemoView::mouseDoubleClickEvent(QMouseEvent*me)
 {
+    logger.log("ENTER DemoView:mouseDoubleClickEvent().");
     me->accept();
+    logger.log("LEAVE DemoView:mouseDoubleClickEvent().");
 }
 
 //void DemoView::mousePressEvent(QMouseEvent*me)
@@ -94,16 +109,22 @@ void DemoView::mouseDoubleClickEvent(QMouseEvent*me)
 
 bool DemoView::eventFilter(QObject *obj, QEvent *e)
 {
+    logger.log("ENTER DemoView:eventFilter().");
+
     qDebug("Select event:%d", e->type());
     if (e->type() == QEvent::MouseButtonRelease && obj->isWidgetType())
     {
         onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GU);
     }
+
+    logger.log("LEAVE DemoView:eventFilter().");
     return QObject::eventFilter(obj, e);
 }
 
 void DemoView::paintEvent(QPaintEvent *e)
 {
+    logger.log("ENTER DemoView:paintEvent().");
+
     QPainter painter(this);
     painter.fillRect(rect(), Qt::white);
     QFont font = QApplication::font();
@@ -112,40 +133,54 @@ void DemoView::paintEvent(QPaintEvent *e)
     QFontMetrics fm(font);
 
     painter.drawText(QRect(point_.x(),point_.y(), 200, 200), Qt::AlignLeft, msg_);
+
+    logger.log("LEAVE DemoView:paintEvent().");
 }
 
 void DemoView::onStartClicked()
 {
+    logger.log("ENTER DemoView:onStartClicked().");
     update();
     onyx::screen::watcher().enqueue(this, onyx::screen::ScreenProxy::GC);
+    logger.log("LEAVE DemoView:onStartClicked().");
 }
 
 void DemoView::onCloseClicked()
 {
+    logger.log("ENTER DemoView:onCloseClicked().");
 //    sys::SysStatus::instance().stopWpaSupplicant();
     qApp->exit();
+    logger.log("LEAVE DemoView:onCloseClicked().");
 }
 
 
 bool DemoView::start()
 {
+    logger.log("ENTER DemoView:start().");
     onStartClicked();
+    logger.log("LEAVE DemoView:start().");
     return true;
 }
 
 bool DemoView::stop()
 {
+    logger.log("ENTER DemoView:stop().");
     onCloseClicked();
+    logger.log("LEAVE DemoView:stop().");
     return true;
 }
 
 bool DemoView::exec(const QStringList & args)
 {
+    logger.log("ENTER DemoView:exec().");
+    logger.log("LEAVE DemoView:exec().");
     return true;
 }
 
 void DemoView::currentState(const QString & str)
 {
+    logger.log("ENTER DemoView:currentState().");
     msg_ = str;
+    logger.log("LEAVE DemoView:currentState().");
 }
 
