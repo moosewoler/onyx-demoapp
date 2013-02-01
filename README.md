@@ -4,14 +4,15 @@ ONYX-DemoApplication
 1. Introduction
 ---------------
 This is (not exactly now) a empty application can be run on onyx boox i62/m92/a62(only tested on i62, maybe work on others). 
+
 What i tested:
-QWidget                         main form
-QWidget::mousePressEvent        
-QWidget::keyReleaseEvent
-QTimer & SLOT & SIGNAL          to repeat screen update
-gettimeofday()                  
-onyx::screen::UpdateWidget()    test all 7 waveforms of EPD controller.
-QFile & QTextStream             to log program information to text file on external sdcard.
+* QWidget                         main form
+* QWidget::mousePressEvent        
+* QWidget::keyReleaseEvent
+* QTimer & SLOT & SIGNAL          to repeat screen update
+* gettimeofday()                  
+* onyx::screen::UpdateWidget()    test all 7 waveforms of EPD controller.
+* QFile & QTextStream             to log program information to text file on external sdcard.
 
 2. Installation & Usage
 -----------------------
