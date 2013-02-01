@@ -5,7 +5,7 @@ ONYX-DemoApplication
 ---------------
 This is (not exactly now) a empty application can be run on onyx boox i62/m92/a62(only tested on i62, maybe work on others). 
 
-What i tested:
+What i have tested:
 * QWidget                         main form
 * QWidget::mousePressEvent        
 * QWidget::keyReleaseEvent
