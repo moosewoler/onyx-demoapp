@@ -4,6 +4,7 @@
 #include "onyx/sys/sys_status.h"
 #include "onyx/sys/platform.h"
 #include "onyx/data/configuration.h"
+#include <sys/time.h>
 #include "demo_logger.h"
 
 static const int BUTTON_HEIGHT = 100;
@@ -21,10 +22,11 @@ DemoView::DemoView(QWidget *parent)
     update();
     onyx::screen::watcher().enqueue(this, onyx::screen::ScreenProxy::GC);
 
+    wftype_=1;  // waveform type from 1 to 7
     freq_=1;
-    timer_.setInterval(int(1/freq_)); // 10Hz
+    timer_.setInterval(int(1/freq_*1000)); // 1Hz
     logger.log(QString("INFO  set freq_ to ")+QString::number(freq_));
-    counter_=10;
+    counter_=2;
     connect(&timer_, SIGNAL(timeout()), this, SLOT(OnTimer()));
     timer_.start();
 
@@ -68,25 +70,31 @@ void DemoView::keyReleaseEvent(QKeyEvent *ke)
         logger.log(QString("INFO  Key_Right pressed."));
         break;
     case Qt::Key_PageDown:
-        if (freq_ > 1)
+        timer_.stop();
+        counter_=2;
+        timer_.start();
+
+        wftype_++;
+        if (wftype_>=7)
         {
-            freq_--;
-            timer_.stop();
-            counter_=10;
-            timer_.setInterval(int(1/freq_));
-            timer_.start();
+            wftype_=7;
         }
+
         logger.log(QString("INFO  Key_PageDown pressed."));
         break;
     case Qt::Key_Down:
         logger.log(QString("INFO  Key_Down pressed."));
         break;
     case Qt::Key_PageUp:
-        freq_++;
         timer_.stop();
-        counter_=10;
-        timer_.setInterval(int(1/freq_));
+        counter_=2;
         timer_.start();
+
+        wftype_--;
+        if (wftype_<=1)
+        {
+            wftype_=1;
+        }
         logger.log(QString("INFO  Key_PageUp pressed."));
         break;
     case Qt::Key_Up:
@@ -154,6 +162,12 @@ bool DemoView::eventFilter(QObject *obj, QEvent *e)
 
 void DemoView::paintEvent(QPaintEvent *e)
 {
+    struct  timeval start;
+    struct  timeval end;
+    unsigned  long elapsed;
+
+    QString wftype;
+
     logger.log("ENTER DemoView:paintEvent().");
 
     QPainter painter(this);
@@ -163,8 +177,65 @@ void DemoView::paintEvent(QPaintEvent *e)
     painter.setFont(font);
     QFontMetrics fm(font);
 
+
     painter.drawText(QRect(point_.x(),point_.y(), width(), 200), Qt::AlignLeft, msg_);
-    onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::A2, false);
+
+    //gettimeofday(&start,NULL);
+    //onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::A2, true, onyx::screen::ScreenCommand::WAIT_ALL);
+    //gettimeofday(&end,NULL);
+    //wftype="A2";
+
+    // i prefer to use switch rather than pass wftype_ directly as a enumeration value
+    switch(wftype_)
+    {
+        case 1:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::DW, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="DW";
+            break;
+        case 2:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::A2, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="A2";
+            break;
+        case 3:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GU, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="GU";
+            break;
+        case 4:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GC, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="GC";
+            break;
+        case 5:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GC4, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="GC4";
+            break;
+        case 6:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GC8, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="GC8";
+            break;
+        case 7:
+            gettimeofday(&start,NULL);
+            onyx::screen::instance().updateWidget(0, onyx::screen::ScreenProxy::GC16, true, onyx::screen::ScreenCommand::WAIT_ALL);
+            gettimeofday(&end,NULL);
+            wftype="GC16";
+            break;
+        default:
+            break;
+    }
+
+    elapsed = 1000000 * (end.tv_sec-start.tv_sec)+ end.tv_usec-start.tv_usec;
+    logger.log(QString("INFO  paintEvent use waveform ")+wftype+QString(", elapsed ")+QString::number(elapsed)+QString(" usec.")); 
 
     logger.log("LEAVE DemoView:paintEvent().");
 }
@@ -222,7 +293,7 @@ void DemoView::OnTimer()
 
     currentState(QString("counter = ")+QString::number(counter_)+QString(" freq = ")+QString::number(freq_));
     point_.setX(point_.x()+1);
-    update();
+    repaint();
 
     counter_--;
     if (counter_ == 0)

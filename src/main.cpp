@@ -1,6 +1,6 @@
 #include <QtCore>
 #include <QtGui>
-#include "onyx/sys/sys_status.h"    // 状态条
+#include "onyx/sys/sys_status.h"
 #include "demo_application.h"       // 本应用对象
 #include "demo_logger.h"
 

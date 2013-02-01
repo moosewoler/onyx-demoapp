@@ -44,6 +44,7 @@ private:
     int     freq_;
     int     counter_;
     QTimer  timer_;
+    int     wftype_;
 
 private:
     OnyxPushButton start_;
