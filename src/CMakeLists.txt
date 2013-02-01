@@ -1,7 +1,7 @@
 ENABLE_QT()
 
 # Header files.
-SET(DEMO_HDRS demo_view.h demo_application.h demo_logger.cpp)
+SET(DEMO_HDRS demo_view.h demo_application.h demo_logger.h)
 
 # Srouce files.
 SET(DEMO_SRCS ${DEMO_HDRS} demo_application.cpp demo_view.cpp demo_logger.cpp main.cpp)
