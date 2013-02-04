@@ -1,17 +1,15 @@
 ENABLE_QT()
 
 # Header files.
-SET(DEMO_HDRS demo_view.h demo_application.h demo_logger.h)
+FILE(GLOB HDRS *.h)
+QT4_WRAP_CPP(MOC_SRCS ${HDRS})
 
-# Srouce files.
-SET(DEMO_SRCS ${DEMO_HDRS} demo_application.cpp demo_view.cpp demo_logger.cpp main.cpp)
-
-# Moc files.
-SET(MOC_DEMO_HDRS demo_application.h demo_view.h)
-QT4_WRAP_CPP(MOC_DEMO_SRCS ${MOC_DEMO_HDRS})
+# Source files.
+FILE(GLOB SRCS *.cpp)
+SET(SRCS ${HDRS} ${SRCS} ${MOC_SRCS})
 
 # Executable file.
-ADD_EXECUTABLE(demoapp.oar ${DEMO_SRCS} ${MOC_DEMO_SRCS} )
+ADD_EXECUTABLE(demoapp.oar ${SRCS} ${MOC_SRCS} )
 TARGET_LINK_LIBRARIES(demoapp.oar
    onyx_data
    onyx_screen
