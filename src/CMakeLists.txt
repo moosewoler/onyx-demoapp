@@ -1,12 +1,17 @@
 ENABLE_QT()
 
-# Header files.
-FILE(GLOB HDRS *.h)
-QT4_WRAP_CPP(MOC_SRCS ${HDRS})
+# Add subdirs
+# add_subdirectory(wpa)
 
-# Source files.
-FILE(GLOB SRCS *.cpp)
-SET(SRCS ${HDRS} ${SRCS} ${MOC_SRCS})
+# Source & Header files.
+file(GLOB HDRS *.h)
+file(GLOB SRCS *.cpp)
+QT4_WRAP_CPP(MOC_SRCS ${HDRS})
+set(SRCS ${HDRS} ${SRCS} ${MOC_SRCS})
+
+# Resources.
+#SET(RESOURCE_SRCS images.qrc)
+#QT4_ADD_RESOURCES(IMAGES_RES ${RESOURCE_SRCS})
 
 # Executable file.
 ADD_EXECUTABLE(demoapp.oar ${SRCS} ${MOC_SRCS} )

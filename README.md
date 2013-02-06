@@ -21,4 +21,5 @@ Copy binary(onyx-demoapp.oar) on your device's Flash (both internal and external
 3. Development & Compilation
 ----------------------------
 This application requires onyx toolchain & SDK which can be obtained from github.com/onyxintl.
+
 Fllows the instructions of onyx how to build the development environment of your own. Then ./build.sh to build binary.
