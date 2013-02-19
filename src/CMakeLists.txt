@@ -1,21 +1,19 @@
 ENABLE_QT()
 
-# Add subdirs
-# add_subdirectory(wpa)
-
-# Source & Header files.
 file(GLOB HDRS *.h)
-file(GLOB SRCS *.cpp)
-QT4_WRAP_CPP(MOC_SRCS ${HDRS})
-set(SRCS ${HDRS} ${SRCS} ${MOC_SRCS})
+file(GLOB SRCS *.cpp *.c)
+set (SRCS ${HDRS} ${SRCS})
 
-# Resources.
-#SET(RESOURCE_SRCS images.qrc)
+# TODO: put QT Moc files here.
+set (MOC_HDRS demo_application.h demo_view.h)
+QT4_WRAP_CPP(MOC_SRCS ${MOC_HDRS})
+
+# TODO: put resources here.
+#set (RESOURCE_SRCS images.qrc)
 #QT4_ADD_RESOURCES(IMAGES_RES ${RESOURCE_SRCS})
 
-# Executable file.
-ADD_EXECUTABLE(demoapp.oar ${SRCS} ${MOC_SRCS} )
-TARGET_LINK_LIBRARIES(demoapp.oar
+add_executable(${OUTPUT_NAME}.oar ${SRCS} ${MOC_SRCS} ${IMAGES_RES})
+target_link_libraries(${OUTPUT_NAME}.oar
    onyx_data
    onyx_screen
    onyx_sys
@@ -23,4 +21,3 @@ TARGET_LINK_LIBRARIES(demoapp.oar
    ${QT_LIBRARIES}
    ${ADD_LIB}
 )
-
