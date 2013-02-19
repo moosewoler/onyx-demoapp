@@ -1,34 +1,33 @@
-macro       (PRE_CONFIGURE)
-    # set up cmake variables
-    set (BUILD_FOR_ARM      ON)
-    set (ONYX_SDK_ROOT      "/opt/onyx/arm")
-    set (USE_CORTEX_A8      ON)
-    set (LINK_ZLIB_DEFAULT  ON)
-    set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-    set (LIBRARY_OUTPUT_PATH    ${PROJECT_BINARY_DIR}/libs)
-    set (TEST_OUTPUT_PATH       ${PROJECT_BINARY_DIR}/unittests)
-    set (QT_PLUGINS_OUTPUT_PATH ${PROJECT_BINARY_DIR}/plugins)
-    #enable_testing()
+# select the proper toolchain
+if (BUILD_FOR_X86)
+    include(x86_toolchain)
+elseif (BUILD_FOR_ARM)
+    include(arm_toolchain)
+elseif (BUILD_FOR_MIPS)
+    include(mips_toolchain)
+endif(BUILD_FOR_X86)
 
-    # Check to use arm toolchain or not
-    if(BUILD_FOR_ARM)
-        USE_ARM_TOOLCHAIN()
-    endif(BUILD_FOR_ARM)
+# cmake modules
+include (FindThreads)
+include (enable_qt)
+#include (qt4_wrap_ts)
+#include (onyx_test)
+#include (misc)
+#include (tc)
+#include (strict_warning)
 
-    if(UNIX OR BUILD_FOR_ARM)
-        add_definitions(-DSHARE_ROOT="/usr/share")
-    else (UNIX OR BUILD_FOR_ARM)
-        add_definitions(-DSHARE_ROOT="")
-        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    endif (UNIX OR BUILD_FOR_ARM)
+# some other staffs
+if(UNIX)
+    add_definitions(-DSHARE_ROOT="/usr/share")
+else (UNIX)
+    add_definitions(-DSHARE_ROOT="")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif (UNIX)
 
-    add_definitions(-DCONFIG_CTRL_IFACE)
-    add_definitions(-DCONFIG_CTRL_IFACE_UNIX)
+add_definitions(-DCONFIG_CTRL_IFACE)
+add_definitions(-DCONFIG_CTRL_IFACE_UNIX)
 
-    # Project include directories.
-    message             (STATUS "QT_LIBRARY_DIR is set to ${QT_LIBRARY_DIR}")
-    message             (STATUS "CMAKE_SOURCE_DIR is set to ${CMAKE_SOURCE_DIR}")
-    message             (STATUS "CMAKE_FIND_ROOT_PATH is set to ${CMAKE_FIND_ROOT_PATH}")
-    include_directories (BEFORE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_FIND_ROOT_PATH}/include)
-    link_directories    (${QT_LIBRARY_DIR})
-endmacro    (PRE_CONFIGURE)
+# Project include directories.
+message             (STATUS "by MWO: QT_LIBRARY_DIR is set to ${QT_LIBRARY_DIR}")
+include_directories (BEFORE ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_FIND_ROOT_PATH}/include ~/Code/freescale/linux-2.6.35.3/include)
+link_directories    (${QT_LIBRARY_DIR})

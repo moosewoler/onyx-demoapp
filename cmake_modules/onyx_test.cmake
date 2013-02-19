@@ -1,3 +1,6 @@
+# - Onyx test target
+#
+# it seems not useful for me.
 macro(ONYX_TEST_WITHOUT_HEAPCHECK NAME SRC)
   add_executable(${NAME} ${SRC})
   target_link_libraries(${NAME} gtest_main)

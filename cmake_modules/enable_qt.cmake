@@ -1,3 +1,6 @@
+# - Find Qt4
+#
+# and enable all Qt components
 MACRO(ENABLE_QT)
     FIND_PACKAGE(Qt4 REQUIRED)
     SET( QT_USE_QTGUI TRUE )
